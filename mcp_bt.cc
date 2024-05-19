@@ -4,6 +4,7 @@
 #include <string>
 #include <climits>
 #include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -12,110 +13,114 @@ struct Position {
 };
 
 const Position moves[8] = {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
-const char move_codes[8] = {'1', '2', '3', '4', '5', '6', '7', '8'};  // Corresponding move codes
+const char move_codes[8] = {'1', '2', '3', '4', '5', '6', '7', '8'};
 
-void mcp_bt(vector<vector<int>>& map, int x, int y, vector<vector<bool>>& visited, int& minCost, vector<Position>& path, vector<Position>& bestPath, int currentCost, int& nvisit, int& nexplored, int& nleaf, int& nunfeasible, int& nnot_promising) {
-    int n = map.size();
-    int m = map[0].size();
+void mcp_bt(vector<vector<int>>& mapa, int x, int y, vector<vector<bool>>& visitado, int& costoMin, vector<Position>& camino, vector<Position>& mejorCamino, int costoActual, int& visitas, int& explorados, int& hojas, int& noFactibles, int& noPrometedores) {
+    int n = mapa.size();
+    int m = mapa[0].size();
     
-    if (x < 0 || x >= n || y < 0 || y >= m || visited[x][y]) {
-        nunfeasible++;
+    if (x < 0 || x >= n || y < 0 || y >= m || visitado[x][y] || costoActual >= costoMin) {
+        noFactibles++;
         return;
     }
 
-    visited[x][y] = true;
-    path.push_back({x, y});
-    nvisit++;
-    currentCost += map[x][y];
+    visitado[x][y] = true;
+    camino.push_back({x, y});
+    visitas++;
+    costoActual += mapa[x][y];
 
     if (x == n-1 && y == m-1) {
-        if (currentCost < minCost) {
-            minCost = currentCost;
-            bestPath = path;
+        if (costoActual < costoMin) {
+            costoMin = costoActual;
+            mejorCamino = camino;
         }
-        nleaf++;
+        hojas++;
     } else {
         for (int i = 0; i < 8; i++) {
-            int nextX = x + moves[i].x;
-            int nextY = y + moves[i].y;
-            if (nextX >= 0 && nextX < n && nextY >= 0 && nextY < m && !visited[nextX][nextY]) {
-                nexplored++;
-                mcp_bt(map, nextX, nextY, visited, minCost, path, bestPath, currentCost, nvisit, nexplored, nleaf, nunfeasible, nnot_promising);
+            int siguienteX = x + moves[i].x;
+            int siguienteY = y + moves[i].y;
+            if (siguienteX >= 0 && siguienteX < n && siguienteY >= 0 && siguienteY < m && !visitado[siguienteX][siguienteY]) {
+                explorados++;
+                mcp_bt(mapa, siguienteX, siguienteY, visitado, costoMin, camino, mejorCamino, costoActual, visitas, explorados, hojas, noFactibles, noPrometedores);
             }
         }
     }
 
-    visited[x][y] = false;
-    path.pop_back();
+    visitado[x][y] = false;
+    camino.pop_back();
 }
 
 int main(int argc, char* argv[]) {
-    string filename;
-    bool showPath = false, showPath2D = false;
+    string nombreArchivo;
+    bool mostrarCamino = false, mostrarCamino2D = false;
     for (int i = 1; i < argc; i++) {
         string arg = argv[i];
         if (arg == "-f" && i + 1 < argc) {
-            filename = argv[++i];
+            nombreArchivo = argv[++i];
         } else if (arg == "-p") {
-            showPath = true;
+            mostrarCamino = true;
         } else if (arg == "--p2D") {
-            showPath2D = true;
+            mostrarCamino2D = true;
         }
     }
 
-    ifstream inputFile(filename);
-    if (!inputFile) {
-        cerr << "Error al abrir el archivo: " << filename << endl;
+    ifstream archivoEntrada(nombreArchivo);
+    if (!archivoEntrada) {
+        cerr << "Error al abrir el archivo: " << nombreArchivo << endl;
         return 1;
     }
 
     int n, m;
-    inputFile >> n >> m;
-    vector<vector<int>> map(n, vector<int>(m));
+    archivoEntrada >> n >> m;
+    vector<vector<int>> mapa(n, vector<int>(m));
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            inputFile >> map[i][j];
+            archivoEntrada >> mapa[i][j];
         }
     }
 
-    vector<vector<bool>> visited(n, vector<bool>(m, false));
-    int minCost = INT_MAX, nvisit = 0, nexplored = 0, nleaf = 0, nunfeasible = 0, nnot_promising = 0;
-    vector<Position> path, bestPath;
-    clock_t start = clock();
+    vector<vector<bool>> visitado(n, vector<bool>(m, false));
+    int costoMin = INT_MAX, visitas = 0, explorados = 0, hojas = 0, noFactibles = 0, noPrometedores = 0;
+    vector<Position> camino, mejorCamino;
+    clock_t inicio = clock();
 
-    mcp_bt(map, 0, 0, visited, minCost, path, bestPath, 0, nvisit, nexplored, nleaf, nunfeasible, nnot_promising);
+    mcp_bt(mapa, 0, 0, visitado, costoMin, camino, mejorCamino, 0, visitas, explorados, hojas, noFactibles, noPrometedores);
 
-    clock_t end = clock();
-    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC * 1000.0;
+    clock_t fin = clock();
+    double tiempoCPU = ((double) (fin - inicio)) / CLOCKS_PER_SEC * 1000;
 
-    cout << minCost << endl;
-    cout << nvisit << " " << nexplored << " " << nleaf << " " << nunfeasible << " " << nnot_promising << endl;
-    cout << cpu_time_used << endl;
+    cout << costoMin << endl;
+    cout << visitas << " " << explorados << " " << hojas << " " << noFactibles << " " << noPrometedores << endl;
+    cout << fixed << setprecision(3) << tiempoCPU << " ms" << endl;
 
-    if (showPath) {
-        cout << "<";
-        for (size_t i = 1; i < bestPath.size(); i++) {
-            Position prev = bestPath[i-1];
-            Position curr = bestPath[i];
-            for (int j = 0; j < 8; j++) {
-                if (prev.x + moves[j].x == curr.x && prev.y + moves[j].y == curr.y) {
-                    cout << move_codes[j];
-                    break;
+    if (mostrarCamino2D) {
+        vector<string> mapaVisual(n, string(m, '.'));
+        for (auto& posicion : mejorCamino) {
+            mapaVisual[posicion.x][posicion.y] = 'x';
+        }
+        for (auto& fila : mapaVisual) {
+            cout << fila << endl;
+        }
+        cout << costoMin << endl;
+    }
+
+    if (mostrarCamino) {
+        if (!mejorCamino.empty()) {
+            cout << "<";
+            for (size_t i = 1; i < mejorCamino.size(); i++) {
+                Position previa = mejorCamino[i-1];
+                Position actual = mejorCamino[i];
+                for (int j = 0; j < 8; j++) {
+                    if (previa.x + moves[j].x == actual.x && previa.y + moves[j].y == actual.y) {
+                        cout << move_codes[j];
+                        break;
+                    }
                 }
             }
+            cout << ">" << endl;
+        } else {
+            cout << "<>" << endl;
         }
-        cout << ">" << endl;
-    }
-
-    if (showPath2D) {
-        vector<string> displayMap(n, string(m, '.'));
-        for (auto& pos : bestPath) {
-            displayMap[pos.x][pos.y] = 'x';
-        }
-        for (auto& row : displayMap) {
-            cout << row << endl;
-        }
-        cout << minCost << endl;
     }
 
     return 0;
