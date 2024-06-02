@@ -1,0 +1,6 @@
+
+/home/omar/Escritorio/ADA/pruebas/001.map: 0m0,006s
+/home/omar/Escritorio/ADA/pruebas/002.map: 0m0,017s
+/home/omar/Escritorio/ADA/pruebas/003.map: 0m0,006s
+/home/omar/Escritorio/ADA/pruebas/004.map: 0m0,005s
+/home/omar/Escritorio/ADA/pruebas/020.map: 0m3,050s

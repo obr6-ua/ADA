@@ -1,0 +1,26 @@
+
+/home/omar/Escritorio/ADA/pruebas/001.map: 0m0,007s
+/home/omar/Escritorio/ADA/pruebas/002.map: 0m0,007s
+/home/omar/Escritorio/ADA/pruebas/003.map: 0m0,009s
+/home/omar/Escritorio/ADA/pruebas/004.map: 0m0,008s
+/home/omar/Escritorio/ADA/pruebas/020.map: 0m0,007s
+/home/omar/Escritorio/ADA/pruebas/031.map: 0m0,009s
+/home/omar/Escritorio/ADA/pruebas/060.map: 0m0,010s
+/home/omar/Escritorio/ADA/pruebas/070.map: 0m0,007s
+/home/omar/Escritorio/ADA/pruebas/080.map: 0m0,020s
+/home/omar/Escritorio/ADA/pruebas/090.map: 0m0,008s
+/home/omar/Escritorio/ADA/pruebas/101.map: 0m0,017s
+/home/omar/Escritorio/ADA/pruebas/151.map: 0m0,016s
+/home/omar/Escritorio/ADA/pruebas/1K.map: 0m0,501s
+/home/omar/Escritorio/ADA/pruebas/201.map: 0m0,019s
+/home/omar/Escritorio/ADA/pruebas/250.map: 0m0,029s
+/home/omar/Escritorio/ADA/pruebas/2K.map: 0m2,053s
+/home/omar/Escritorio/ADA/pruebas/301.map: 0m0,038s
+/home/omar/Escritorio/ADA/pruebas/3K.map: 0m5,248s
+/home/omar/Escritorio/ADA/pruebas/401.map: 0m0,065s
+/home/omar/Escritorio/ADA/pruebas/4K.map: 0m11,230s
+/home/omar/Escritorio/ADA/pruebas/501.map: 0m0,099s
+/home/omar/Escritorio/ADA/pruebas/600.map: 0m0,181s
+/home/omar/Escritorio/ADA/pruebas/700.map: 0m0,205s
+/home/omar/Escritorio/ADA/pruebas/800.map: 0m0,272s
+/home/omar/Escritorio/ADA/pruebas/900.map: 0m0,398s

@@ -1,3 +1,5 @@
+//Nombre: Omar Bouaouda Ruiz - DNI/NIE: 48736098H
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -34,7 +36,11 @@ int estimarCotaPesimista(const vector<vector<int>>& mapa, int x, int y, int n, i
     return (distX + distY) * menorCosto;
 }
 
-void mcp_bb(vector<vector<int>>& mapa, int x, int y, vector<vector<bool>>& visitado, int& costoMin, vector<Position>& camino, vector<Position>& mejorCamino, int costoActual, int menorCosto, int& visitas, int& explorados, int& hojas, int& noFactibles, int& noPrometedores, int& prometedoresDescartados) {
+void mcp_bb(vector<vector<int>>& mapa, int x, int y, vector<vector<bool>>& visitado, 
+            int& costoMin, vector<Position>& camino, vector<Position>& mejorCamino, 
+            int costoActual, int menorCosto, int& visitas, int& explorados, int& hojas, 
+            int& noFactibles, int& noPrometedores, int& prometedoresDescartados, 
+            int& nbest_solution_updated_from_leafs, int& nbest_solution_updated_from_pessimistic_bound) {
     int n = mapa.size();
     int m = mapa[0].size();
     
@@ -58,6 +64,7 @@ void mcp_bb(vector<vector<int>>& mapa, int x, int y, vector<vector<bool>>& visit
         if (costoActual < costoMin) {
             costoMin = costoActual;
             mejorCamino = camino;
+            nbest_solution_updated_from_leafs++; // Incrementar cuando se actualiza desde un nodo hoja
         }
         hojas++;
     } else {
@@ -65,13 +72,17 @@ void mcp_bb(vector<vector<int>>& mapa, int x, int y, vector<vector<bool>>& visit
             explorados++;
             int siguienteX = x + moves[i].x;
             int siguienteY = y + moves[i].y;
-            mcp_bb(mapa, siguienteX, siguienteY, visitado, costoMin, camino, mejorCamino, costoActual, menorCosto, visitas, explorados, hojas, noFactibles, noPrometedores, prometedoresDescartados);
+            mcp_bb(mapa, siguienteX, siguienteY, visitado, costoMin, camino, mejorCamino, 
+                   costoActual, menorCosto, visitas, explorados, hojas, noFactibles, 
+                   noPrometedores, prometedoresDescartados, nbest_solution_updated_from_leafs, 
+                   nbest_solution_updated_from_pessimistic_bound);
         }
     }
 
     visitado[x][y] = false;
     camino.pop_back();
 }
+
 
 int main(int argc, char* argv[]) {
     string nombreArchivo;
@@ -106,17 +117,22 @@ int main(int argc, char* argv[]) {
     int costoMin = INT_MAX;
     int menorCosto = findLowestCost(mapa);
     int visitas = 0, explorados = 0, hojas = 0, noFactibles = 0, noPrometedores = 0, prometedoresDescartados = 0;
+    int nbest_solution_updated_from_leafs = 0;
+    int nbest_solution_updated_from_pessimistic_bound = 0;
     vector<Position> camino, mejorCamino;
     clock_t inicio = clock();
 
-    mcp_bb(mapa, 0, 0, visitado, costoMin, camino, mejorCamino, 0, menorCosto, visitas, explorados, hojas, noFactibles, noPrometedores, prometedoresDescartados);
+    mcp_bb(mapa, 0, 0, visitado, costoMin, camino, mejorCamino, 
+                   0, menorCosto, visitas, explorados, hojas, noFactibles, 
+                   noPrometedores, prometedoresDescartados, nbest_solution_updated_from_leafs, 
+                   nbest_solution_updated_from_pessimistic_bound);
 
     clock_t fin = clock();
-    double tiempoCPU = ((double) (fin - inicio)) / CLOCKS_PER_SEC * 1000;
+    double tiempoCPU = ((double) (fin - inicio)) / CLOCKS_PER_SEC;
 
     cout << costoMin << endl;
-    cout << visitas << " " << explorados << " " << hojas << " " << noFactibles << " " << noPrometedores << " " << prometedoresDescartados << endl;
-    cout << fixed << setprecision(3) << tiempoCPU << " ms" << endl;
+    cout << visitas << " " << explorados << " " << hojas << " " << noFactibles << " " << noPrometedores << " " << prometedoresDescartados << " " << nbest_solution_updated_from_leafs << " " << nbest_solution_updated_from_pessimistic_bound << endl;
+    cout << fixed << setprecision(3) << tiempoCPU << endl;
 
     if (mostrarCamino2D) {
         vector<string> mapaVisual(n, string(m, '.'));
